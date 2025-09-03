@@ -1,0 +1,1475 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 4,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "mssql",
+        "uid": "bewsxypsdktmob"
+      },
+      "description": " How often we release to production",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.1.1",
+      "targets": [
+        {
+          "dataset": "devopsdatabase",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n  DATEADD(WEEK, DATEDIFF(WEEK, 0, cdt.cd_date), 0) AS WeekStart,\r\n  COUNT(*) AS ProdDeployments\r\nFROM devopsdata.CDT_Metrics cdt\r\nJOIN devopsdata.CI_Metrics ci ON cdt.artifact_id = ci.artifact_id\r\nWHERE\r\n  cdt.env_level = 'PROD'\r\n  AND ci.ci_date BETWEEN $__timeFrom() AND $__timeTo()\r\n  AND cdt.deployment_status = 'SUCCESS'\r\n  AND (ci.group_name IN ($GroupName))\r\n  AND (ci.area_name IN ($AreaName))\r\n  AND (ci.service_name IN ($ServiceName))\r\nGROUP BY DATEADD(WEEK, DATEDIFF(WEEK, 0, cdt.cd_date), 0)\r\nORDER BY WeekStart;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "devopsdata.CDT_Metrics"
+        }
+      ],
+      "title": "Deployment Frequency",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "mssql",
+        "uid": "bewsxypsdktmob"
+      },
+      "description": " How often we release to QA",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "QA_Deployments"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "QADeployments"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.1.1",
+      "targets": [
+        {
+          "dataset": "devopsdatabase",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n  DATEADD(WEEK, DATEDIFF(WEEK, 0, cdt.cd_date), 0) AS WeekStart,\r\n  COUNT(*) AS QADeployments\r\nFROM devopsdata.CDT_Metrics cdt\r\nJOIN devopsdata.CI_Metrics ci ON cdt.artifact_id = ci.artifact_id\r\nWHERE\r\n  cdt.env_level = 'QA'\r\n  AND ci.ci_date BETWEEN $__timeFrom() AND $__timeTo()\r\n  AND cdt.deployment_status = 'SUCCESS'\r\n  AND (ci.group_name IN ($GroupName))\r\n  AND (ci.area_name IN ($AreaName))\r\n  AND (ci.service_name IN ($ServiceName))\r\nGROUP BY DATEADD(WEEK, DATEDIFF(WEEK, 0, cdt.cd_date), 0)\r\nORDER BY WeekStart;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "devopsdata.CDT_Metrics"
+        }
+      ],
+      "title": "Delivery Frequency",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "mssql",
+        "uid": "bewsxypsdktmob"
+      },
+      "description": " % of successful builds vs total builds",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "WeeklySuccessRate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 6
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.1.1",
+      "targets": [
+        {
+          "dataset": "devopsdatabase",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n  DATEADD(WEEK, DATEDIFF(WEEK, 0, ci.ci_date), 0) AS WeekStart,\r\n  CAST(\r\n    100.0 * SUM(CASE WHEN ci.pipeline_status = 'SUCCESS' THEN 1 ELSE 0 END)\r\n    / NULLIF(COUNT(*), 0)\r\n    AS DECIMAL(5,2)\r\n  ) AS WeeklySuccessRate\r\nFROM devopsdata.CI_Metrics ci\r\nWHERE\r\n  ci.ci_date BETWEEN $__timeFrom() AND $__timeTo()\r\n  AND (ci.group_name IN ($GroupName))\r\n  AND (ci.area_name IN ($AreaName))\r\n  AND (ci.service_name IN ($ServiceName))\r\nGROUP BY DATEADD(WEEK, DATEDIFF(WEEK, 0, ci.ci_date), 0)\r\nORDER BY WeekStart;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "devopsdata.CDT_Metrics"
+        }
+      ],
+      "title": "Build Success Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "mssql",
+        "uid": "bewsxypsdktmob"
+      },
+      "description": "Average CI pipeline duration",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 3
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "WeeklySuccessRate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 6
+      },
+      "id": 6,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.87,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.1.1",
+      "targets": [
+        {
+          "dataset": "devopsdatabase",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n  DATEADD(WEEK, DATEDIFF(WEEK, 0, ci.ci_date), 0) AS WeekStart,\r\n  CAST(AVG(ci.pipeline_duration) AS DECIMAL(10,2)) AS AvgPipelineDuration\r\nFROM devopsdata.CI_Metrics ci\r\nWHERE\r\n  ci.pipeline_duration IS NOT NULL\r\n  AND ci.ci_date BETWEEN $__timeFrom() AND $__timeTo()\r\n  AND (ci.group_name IN ($GroupName))\r\n  AND (ci.area_name IN ($AreaName))\r\n  AND (ci.service_name IN ($ServiceName))\r\nGROUP BY DATEADD(WEEK, DATEDIFF(WEEK, 0, ci.ci_date), 0)\r\nORDER BY WeekStart;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "devopsdata.CDT_Metrics"
+        }
+      ],
+      "title": "Build Duration",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "mssql",
+        "uid": "bewsxypsdktmob"
+      },
+      "description": "Average % of code covered by tests",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 3
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "WeeklySuccessRate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "AvgCodeCoveragePercent"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "super-light-yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 12
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.1.1",
+      "targets": [
+        {
+          "dataset": "devopsdatabase",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n  DATEADD(WEEK, DATEDIFF(WEEK, 0, cdt.cd_date), 0) AS WeekStart,\r\n  CAST(AVG(cdt.code_coverage) AS DECIMAL(5,2)) AS AvgCodeCoveragePercent\r\nFROM devopsdata.CDT_Metrics cdt\r\nJOIN devopsdata.CI_Metrics ci ON cdt.artifact_id = ci.artifact_id\r\nWHERE\r\n  cdt.code_coverage IS NOT NULL\r\n  AND cdt.cd_date BETWEEN $__timeFrom() AND $__timeTo()\r\n  AND (ci.group_name IN ($GroupName))\r\n  AND (ci.area_name IN ($AreaName))\r\n  AND (ci.service_name IN ($ServiceName))\r\nGROUP BY DATEADD(WEEK, DATEDIFF(WEEK, 0, cdt.cd_date), 0)\r\nORDER BY WeekStart;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "devopsdata.CDT_Metrics"
+        }
+      ],
+      "title": "QA Coverage",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "mssql",
+        "uid": "bewsxypsdktmob"
+      },
+      "description": "Test Pass Rate = (passed_tests / total_tests) * 100 \n",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 3
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "WeeklySuccessRate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "AvgCodeCoveragePercent"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "super-light-yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "AvgTestPassRate"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": []
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "AvgTestPassRate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#77a0d9",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 12
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.1.1",
+      "targets": [
+        {
+          "dataset": "devopsdatabase",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n  DATEADD(WEEK, DATEDIFF(WEEK, 0, cdt.cd_date), 0) AS WeekStart,\r\n  CAST(\r\n    AVG(\r\n      CASE \r\n        WHEN cdt.total_tests > 0 THEN \r\n          100.0 * cdt.passed_tests / cdt.total_tests\r\n        ELSE NULL\r\n      END\r\n    ) AS DECIMAL(5,2)\r\n  ) AS AvgTestPassRate\r\nFROM devopsdata.CDT_Metrics cdt\r\nJOIN devopsdata.CI_Metrics ci ON cdt.artifact_id = ci.artifact_id\r\nWHERE\r\n  cdt.cd_date BETWEEN $__timeFrom() AND $__timeTo()\r\n  AND (ci.group_name IN ($GroupName))\r\n  AND (ci.area_name IN ($AreaName))\r\n  AND (ci.service_name IN ($ServiceName))\r\nGROUP BY DATEADD(WEEK, DATEDIFF(WEEK, 0, cdt.cd_date), 0)\r\nORDER BY WeekStart;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "devopsdata.CDT_Metrics"
+        }
+      ],
+      "title": "Test Pass Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "mssql",
+        "uid": "bewsxypsdktmob"
+      },
+      "description": "Number of successful deployments over time",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 3
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "WeeklySuccessRate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 18
+      },
+      "id": 9,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.87,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.1.1",
+      "targets": [
+        {
+          "dataset": "devopsdatabase",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n  DATEADD(WEEK, DATEDIFF(WEEK, 0, cdt.cd_date), 0) AS WeekStart,\r\n  COUNT(*) AS SuccessfulDeployments\r\nFROM devopsdata.CDT_Metrics cdt\r\nJOIN devopsdata.CI_Metrics ci ON cdt.artifact_id = ci.artifact_id\r\nWHERE\r\n  cdt.env_level = 'PROD'\r\n  AND cdt.deployment_status = 'SUCCESS'\r\n  AND cdt.cd_date BETWEEN $__timeFrom() AND $__timeTo()\r\n  AND (ci.group_name IN ($GroupName))\r\n  AND (ci.area_name IN ($AreaName))\r\n  AND (ci.service_name IN ($ServiceName))\r\nGROUP BY DATEADD(WEEK, DATEDIFF(WEEK, 0, cdt.cd_date), 0)\r\nORDER BY WeekStart;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "devopsdata.CDT_Metrics"
+        }
+      ],
+      "title": "Pipeline Throughput",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "mssql",
+        "uid": "bewsxypsdktmob"
+      },
+      "description": "% of builds promoted from dev → qa → prod",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 3
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "WeeklySuccessRate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "AvgCodeCoveragePercent"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "super-light-yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "AvgTestPassRate"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": []
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "AvgTestPassRate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#77a0d9",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 18
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.1.1",
+      "targets": [
+        {
+          "dataset": "devopsdatabase",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH ArtifactPromotionFlags AS (\r\n  SELECT\r\n    cdt.artifact_id,\r\n    DATEADD(WEEK, DATEDIFF(WEEK, 0, MIN(cdt.cd_date)), 0) AS WeekStart,\r\n    MAX(CASE WHEN cdt.env_level = 'DEV' AND cdt.deployment_status = 'SUCCESS' THEN 1 ELSE 0 END) AS has_dev,\r\n    MAX(CASE WHEN cdt.env_level = 'QA' AND cdt.deployment_status = 'SUCCESS' THEN 1 ELSE 0 END) AS has_staging,\r\n    MAX(CASE WHEN cdt.env_level = 'PROD' AND cdt.deployment_status = 'SUCCESS' THEN 1 ELSE 0 END) AS has_prod\r\n  FROM devopsdata.CDT_Metrics cdt\r\n  JOIN devopsdata.CI_Metrics ci ON cdt.artifact_id = ci.artifact_id\r\n  WHERE\r\n    cdt.cd_date BETWEEN $__timeFrom() AND $__timeTo()\r\n  AND (ci.group_name IN ($GroupName))\r\n  AND (ci.area_name IN ($AreaName))\r\n  AND (ci.service_name IN ($ServiceName))\r\n  GROUP BY cdt.artifact_id\r\n)\r\n\r\nSELECT\r\n  WeekStart,\r\n  COUNT(*) AS TotalArtifactsInDev,\r\n  SUM(CASE WHEN has_dev = 1 AND has_staging = 1 AND has_prod = 1 THEN 1 ELSE 0 END) AS FullyPromotedArtifacts,\r\n  CAST(\r\n    100.0 * SUM(CASE WHEN has_dev = 1 AND has_staging = 1 AND has_prod = 1 THEN 1 ELSE 0 END)\r\n    / NULLIF(COUNT(*), 0)\r\n    AS DECIMAL(5,2)\r\n  ) AS ArtifactPromotionRate\r\nFROM ArtifactPromotionFlags\r\nWHERE has_dev = 1\r\nGROUP BY WeekStart\r\nORDER BY WeekStart;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "devopsdata.CDT_Metrics"
+        }
+      ],
+      "title": "Artifact Promotion Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "mssql",
+        "uid": "bewsxypsdktmob"
+      },
+      "description": "Count of rollback deployments",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 3
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "WeeklySuccessRate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "id": 11,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.87,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.1.1",
+      "targets": [
+        {
+          "dataset": "devopsdatabase",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n  DATEADD(WEEK, DATEDIFF(WEEK, 0, cdt.cd_date), 0) AS WeekStart,\r\n  COUNT(*) AS RollbackCount\r\nFROM devopsdata.CDT_Metrics cdt\r\nJOIN devopsdata.CI_Metrics ci ON cdt.artifact_id = ci.artifact_id\r\nWHERE\r\n  cdt.deployment_status = 'ROLLBACK'\r\n  AND cdt.cd_date BETWEEN $__timeFrom() AND $__timeTo()\r\n  AND (ci.group_name IN ($GroupName))\r\n  AND (ci.area_name IN ($AreaName))\r\n  AND (ci.service_name IN ($ServiceName))\r\nGROUP BY DATEADD(WEEK, DATEDIFF(WEEK, 0, cdt.cd_date), 0)\r\nORDER BY WeekStart;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "devopsdata.CDT_Metrics"
+        }
+      ],
+      "title": "Rollback Frequency",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "mssql",
+        "uid": "bewsxypsdktmob"
+      },
+      "description": "Average test execution time",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 3
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "WeeklySuccessRate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 24
+      },
+      "id": 12,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.1.1",
+      "targets": [
+        {
+          "dataset": "devopsdatabase",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n  DATEADD(WEEK, DATEDIFF(WEEK, 0, cdt.cd_date), 0) AS WeekStart,\r\n  CAST(AVG(cdt.test_duration) AS DECIMAL(10,2)) AS AvgTestExecutionTime\r\nFROM devopsdata.CDT_Metrics cdt\r\nJOIN devopsdata.CI_Metrics ci ON cdt.artifact_id = ci.artifact_id\r\nWHERE\r\n  cdt.test_duration IS NOT NULL\r\n  AND cdt.cd_date IS NOT NULL\r\n  AND cdt.cd_date BETWEEN $__timeFrom() AND $__timeTo()\r\n  AND (ci.group_name IN ($GroupName))\r\n  AND (ci.area_name IN ($AreaName))\r\n  AND (ci.service_name IN ($ServiceName))\r\nGROUP BY DATEADD(WEEK, DATEDIFF(WEEK, 0, cdt.cd_date), 0)\r\nORDER BY WeekStart;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "devopsdata.CDT_Metrics"
+        }
+      ],
+      "title": "Test Efficiency",
+      "type": "barchart"
+    }
+  ],
+  "preload": false,
+  "schemaVersion": 41,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allowCustomValue": false,
+        "current": {
+          "text": "Digital",
+          "value": "Digital"
+        },
+        "definition": "SELECT DISTINCT group_Name FROM devopsdata.CI_Metrics\nORDER BY group_Name;",
+        "includeAll": true,
+        "label": "GroupName",
+        "name": "GroupName",
+        "options": [],
+        "query": "SELECT DISTINCT group_Name FROM devopsdata.CI_Metrics\nORDER BY group_Name;",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "allowCustomValue": false,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "definition": "SELECT DISTINCT area_Name FROM devopsdata.CI_Metrics WHERE group_Name IN ($GroupName) ORDER BY area_Name;",
+        "description": "",
+        "includeAll": true,
+        "label": "AreaName",
+        "name": "AreaName",
+        "options": [],
+        "query": "SELECT DISTINCT area_Name FROM devopsdata.CI_Metrics WHERE group_Name IN ($GroupName) ORDER BY area_Name;",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "allowCustomValue": false,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "definition": "SELECT DISTINCT service_Name FROM devopsdata.CI_Metrics WHERE area_Name IN ($AreaName) ORDER BY service_Name;",
+        "description": "",
+        "includeAll": true,
+        "label": "ServiceName",
+        "name": "ServiceName",
+        "options": [],
+        "query": "SELECT DISTINCT service_Name FROM devopsdata.CI_Metrics WHERE area_Name IN ($AreaName) ORDER BY service_Name;",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "DevOpsDashboardExec",
+  "uid": "93a2e0b2-388d-4169-a03d-d96b1c0f8326",
+  "version": 65
+}
