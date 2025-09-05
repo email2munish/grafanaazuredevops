@@ -1,0 +1,343 @@
+======================================
+
+-- Step 1: Create the database
+CREATE DATABASE devopsdatabase;
+GO
+
+-- Step 2: Switch to the new database
+USE devopsdatabase;
+GO
+
+-- Step 3: Create the schema
+CREATE SCHEMA devopsdata;
+GO
+
+
+USE devopsdatabase;
+GO
+
+DROP TABLE devopsdata.CDT_Metrics;
+DROP TABLE devopsdata.CI_Metrics;
+
+-- Step 4: Create CI_Metrics table in devopsdata schema
+CREATE TABLE devopsdata.CI_Metrics (
+    build_id VARCHAR(50) PRIMARY KEY,
+    service_Name VARCHAR(50) NOT NULL,
+    branch_Name VARCHAR(100) NOT NULL,
+    group_Name VARCHAR(50) NOT NULL,
+    area_Name VARCHAR(50) NOT NULL,
+    artifact_id VARCHAR(50) NOT NULL,
+    action_Type VARCHAR(50) NOT NULL,
+    ci_date DATETIMEOFFSET NOT NULL,
+
+    sqr_issues INT,
+    new_sqr_issues INT,
+    sqr_rating VARCHAR(50),
+    new_sqr_rating VARCHAR(50),
+    sqr_remediation_effort VARCHAR(50),
+    new_sqr_remediation_effort VARCHAR(50),
+
+    sqm_issues INT,
+    new_sqm_issues INT,
+    sqm_remediation_effort VARCHAR(50),
+    new_sqm_remediation_effort VARCHAR(50),
+    sqm_debt_ratio VARCHAR(50),
+    new_sqm_debt_ratio VARCHAR(50),
+    sqm_rating VARCHAR(50),
+    new_sqm_rating VARCHAR(50),
+
+    coverage INT,
+    new_coverage INT,
+    lines_to_cover INT,
+    new_lines_to_cover INT,
+    uncovered_lines INT,
+    new_uncovered_lines INT,
+    tests INT,
+    test_errors INT,
+    test_failures INT,
+    skipped_tests INT,
+    test_execution_time INT,
+    test_success_density INT,
+
+    duplicated_lines_density INT,
+    new_duplicated_lines_density INT,
+    duplicated_lines INT,
+    duplicated_blocks INT,
+    new_duplicated_blocks INT,
+    duplicated_files INT,
+
+    new_lines INT,
+    ncloc INT,
+    lines INT,
+    statements INT,
+    functions INT,
+    classes INT,
+    files INT,
+    comment_lines INT,
+    comment_lines_density INT,
+
+    complexity INT,
+    cognitive_complexity INT,
+
+    violations INT,
+    new_violations INT,
+    open_issues INT,
+    accepted_issues INT,
+    false_positive_issues INT,
+    software_quality_blocker_issues INT,
+    software_quality_high_issues INT,
+    software_quality_medium_issues INT,
+    software_quality_low_issues INT,
+
+    sast_issue_low INT,
+    sast_issue_medium INT,
+    sast_issue_high INT,
+    sast_issue_critical INT,
+    sast_issue_blocker INT,
+    sast_issue_total INT,
+
+    sca_issue_low INT,
+    sca_issue_medium INT,
+    sca_issue_high INT,
+    sca_issue_critical INT,
+    sca_issue_blocker INT,
+    sca_issue_total INT,
+
+    twist_vulnerabilities_low INT,
+    twist_vulnerabilities_medium INT,
+    twist_vulnerabilities_high INT,
+    twist_vulnerabilities_critical INT,
+    twist_vulnerabilities_blocker INT,
+    twist_vulnerabilities_total INT,
+
+    twist_compliance_low INT,
+    twist_compliance_medium INT,
+    twist_compliance_high INT,
+    twist_compliance_critical INT,
+    twist_compliance_blocker INT,
+    twist_compliance_total INT,
+
+    pipeline_status VARCHAR(50),
+    pipeline_duration INT
+);
+GO
+
+ALTER TABLE devopsdata.CI_Metrics
+ADD CONSTRAINT UQ_CI_Artifact UNIQUE (artifact_id);
+
+
+-- Step 5: Create CDT_Metrics table in devopsdata schema
+CREATE TABLE devopsdata.CDT_Metrics (
+    build_id VARCHAR(50) PRIMARY KEY,
+    artifact_id VARCHAR(50) NOT NULL,
+    action_Type VARCHAR(50) NOT NULL,
+    env_level VARCHAR(50),
+    cd_date DATETIMEOFFSET,
+    ct_date DATETIMEOFFSET,
+    started_by VARCHAR(100),
+    approver VARCHAR(100),
+    deployment_status VARCHAR(50),
+    total_tests INT,
+    passed_tests INT,
+    failed_tests INT,
+    notrun_tests INT,
+    tests_status VARCHAR(50),
+    tests_coverage INT,
+    test_duration INT,
+    code_coverage INT,
+    test_tool VARCHAR(50),
+    pipeline_status VARCHAR(50),
+    pipeline_duration INT,
+
+    CONSTRAINT FK_CDT_CI FOREIGN KEY (artifact_id)
+        REFERENCES devopsdata.CI_Metrics(artifact_id)
+        ON DELETE CASCADE
+);
+GO
+
+
+/// not required
+ALTER TABLE devopsdata.CDT_Metrics
+ALTER COLUMN tests_status VARCHAR(50);
+
+ALTER TABLE devopsdata.CDT_Metrics
+ADD CONSTRAINT FK_CDT_CI FOREIGN KEY (artifact_id)
+REFERENCES devopsdata.CI_Metrics(artifact_id)
+ON DELETE CASCADE;
+
+
+#####################################################################
+
+sample data --- SQL insert
+
+
+=========================================================
+manual script---
+INSERT INTO devopsdata.CI_Metrics (
+    build_id, service_Name, group_Name, area_Name, artifact_id, action_Type, ci_date,
+    sqr_issues, new_sqr_issues, sqr_rating, new_sqr_rating, sqr_remediation_effort, new_sqr_remediation_effort,
+    sqm_issues, new_sqm_issues, sqm_remediation_effort, new_sqm_remediation_effort, sqm_debt_ratio, new_sqm_debt_ratio, sqm_rating, new_sqm_rating,
+    coverage, new_coverage, lines_to_cover, new_lines_to_cover, uncovered_lines, new_uncovered_lines,
+    tests, test_errors, test_failures, skipped_tests, test_execution_time, test_success_density,
+    duplicated_lines_density, new_duplicated_lines_density, duplicated_lines, duplicated_blocks, new_duplicated_blocks, duplicated_files,
+    new_lines, ncloc, lines, statements, functions, classes, files, comment_lines, comment_lines_density,
+    complexity, cognitive_complexity,
+    violations, new_violations, open_issues, accepted_issues, false_positive_issues,
+    software_quality_blocker_issues, software_quality_high_issues, software_quality_medium_issues, software_quality_low_issues,
+    sast_issue_low, sast_issue_medium, sast_issue_high, sast_issue_critical, sast_issue_blocker, sast_issue_total,
+    sca_issue_low, sca_issue_medium, sca_issue_high, sca_issue_critical, sca_issue_blocker, sca_issue_total,
+    twist_vulnerabilities_low, twist_vulnerabilities_medium, twist_vulnerabilities_high, twist_vulnerabilities_critical, twist_vulnerabilities_blocker, twist_vulnerabilities_total,
+    twist_compliance_low, twist_compliance_medium, twist_compliance_high, twist_compliance_critical, twist_compliance_blocker, twist_compliance_total,
+    pipeline_status, pipeline_duration
+)
+VALUES
+-- CI rows for artifactIds ProfileService-2026 to ProfileService-2035
+-- Sample row: buildId 201
+('201', 'ProfileService', 'Digital', 'MyAccount', 'ProfileService-2026', 'CI', '2025-08-02T10:15:00-05:00',
+ 11, 2, 'B', 'A', '2h', '1h', 7, 2, '3h', '1.5h', '5%', '3%', 'C', 'B',
+ 78, 82, 1200, 1250, 264, 225, 150, 2, 5, 3, 120, 95,
+ 4, 3, 48, 6, 4, 2, 300, 4500, 5000, 1200, 85, 22, 40, 600, 12,
+ 150, 90, 25, 5, 10, 8, 2, 1, 3, 6, 15,
+ 4, 3, 2, 1, 0, 10,
+ 2, 1, 1, 0, 0, 4,
+ 1, 2, 1, 0, 0, 4,
+ 0, 1, 0, 0, 0, 1,
+ 'SUCCESS', 180),
+-- Repeat for buildId 203 to 219 with incremented artifactId and varied metrics...
+-- Example:
+('203', 'ProfileService', 'Digital', 'MyAccount', 'ProfileService-2027', 'CI', '2025-08-04T11:30:00-05:00',
+ 12, 3, 'B', 'A', '2h', '1h', 8, 2, '3h', '1.5h', '5%', '3%', 'C', 'B',
+ 79, 83, 1210, 1260, 260, 230, 152, 1, 4, 2, 122, 96,
+ 3, 2, 45, 5, 3, 1, 310, 4550, 5050, 1210, 86, 23, 41, 610, 13,
+ 152, 91, 26, 6, 11, 9, 2, 1, 4, 7, 16,
+ 5, 3, 2, 1, 0, 11,
+ 3, 1, 1, 0, 0, 5,
+ 2, 2, 1, 0, 0, 5,
+ 0, 1, 0, 0, 0, 1,
+ 'SUCCESS', 181),
+-- Continue for buildId 205, 207, ..., 219
+;
+
+
+INSERT INTO devopsdata.CDT_Metrics (
+    build_id, artifact_id, action_Type, env_level, cd_date, ct_date,
+    started_by, approver, deployment_status,
+    total_tests, passed_tests, failed_tests, notrun_tests, tests_status,
+    tests_coverage, test_duration, code_coverage, test_tool,
+    pipeline_status, pipeline_duration
+)
+VALUES
+-- CDT rows for artifactIds ProfileService-2026 to ProfileService-2035
+-- Sample row: buildId 202
+('202', 'ProfileService-2026', 'CDT', 'PROD', '2025-08-02T10:45:00-05:00', '2025-08-02T11:15:00-05:00',
+ 'deploy_user', 'qa_lead', 'SUCCESS',
+ 120, 110, 5, 5, 'STABLE',
+ 85, 150, 78, 'JUnit',
+ 'COMPLETED', 180),
+-- Repeat for buildId 204 to 220 with matching artifactId and varied test metrics...
+-- Example:
+('204', 'ProfileService-2027', 'CDT', 'PROD', '2025-08-04T12:00:00-05:00', '2025-08-04T12:30:00-05:00',
+ 'deploy_user', 'qa_lead', 'SUCCESS',
+ 122, 112, 6, 4, 'STABLE',
+ 86, 152, 79, 'JUnit',
+ 'COMPLETED', 181),
+-- Continue for buildId 206, 208, ..., 220
+;
+
+
+=========================================
+
+auto script--- 
+
+
+-- Optional cleanup to avoid duplicate key errors
+DELETE FROM devopsdata.CDT_Metrics WHERE build_id BETWEEN 202 AND 220;
+DELETE FROM devopsdata.CI_Metrics WHERE build_id BETWEEN 201 AND 219;
+
+DECLARE @i INT = 0;
+DECLARE @buildIdCI INT = 241;
+DECLARE @buildIdCDT INT = 242;
+DECLARE @artifactSuffix INT = 001;
+DECLARE @baseDate DATETIMEOFFSET = '2025-08-01 10:00:00 -05:00';
+
+WHILE @i < 10
+BEGIN
+    DECLARE @artifactId VARCHAR(50) = 'ProfileService-Release-' + CAST(@artifactSuffix AS VARCHAR);
+    DECLARE @ciDate DATETIMEOFFSET = DATEADD(DAY, @i * 2, @baseDate);
+    DECLARE @cdDate DATETIMEOFFSET = DATEADD(MINUTE, 30, @ciDate);
+    DECLARE @ctDate DATETIMEOFFSET = DATEADD(MINUTE, 60, @ciDate);
+
+    -- Insert CI Metrics
+    INSERT INTO devopsdata.CI_Metrics (
+        build_id, service_Name, branch_Name,group_Name, area_Name, artifact_id, action_Type, ci_date,
+        sqr_issues, new_sqr_issues, sqr_rating, new_sqr_rating, sqr_remediation_effort, new_sqr_remediation_effort,
+        sqm_issues, new_sqm_issues, sqm_remediation_effort, new_sqm_remediation_effort, sqm_debt_ratio, new_sqm_debt_ratio, sqm_rating, new_sqm_rating,
+        coverage, new_coverage, lines_to_cover, new_lines_to_cover, uncovered_lines, new_uncovered_lines,
+        tests, test_errors, test_failures, skipped_tests, test_execution_time, test_success_density,
+        duplicated_lines_density, new_duplicated_lines_density, duplicated_lines, duplicated_blocks, new_duplicated_blocks, duplicated_files,
+        new_lines, ncloc, lines, statements, functions, classes, files, comment_lines, comment_lines_density,
+        complexity, cognitive_complexity,
+        violations, new_violations, open_issues, accepted_issues, false_positive_issues,
+        software_quality_blocker_issues, software_quality_high_issues, software_quality_medium_issues, software_quality_low_issues,
+        sast_issue_low, sast_issue_medium, sast_issue_high, sast_issue_critical, sast_issue_blocker, sast_issue_total,
+        sca_issue_low, sca_issue_medium, sca_issue_high, sca_issue_critical, sca_issue_blocker, sca_issue_total,
+        twist_vulnerabilities_low, twist_vulnerabilities_medium, twist_vulnerabilities_high, twist_vulnerabilities_critical, twist_vulnerabilities_blocker, twist_vulnerabilities_total,
+        twist_compliance_low, twist_compliance_medium, twist_compliance_high, twist_compliance_critical, twist_compliance_blocker, twist_compliance_total,
+        pipeline_status, pipeline_duration
+    )
+    VALUES (
+        CAST(@buildIdCI AS VARCHAR), 'ProfileService', 'Main', 'Digital', 'MyAccount', @artifactId, 'CI', @ciDate,
+        10 + @i, 2 + @i % 3, 'B', 'A', '2h', '1h',
+        8 + @i, 2, '3h', '1.5h', '5%', '3%', 'C', 'B',
+        78 + @i, 82 + @i, 1200 + @i * 10, 1250 + @i * 10, 260 + @i * 2, 225 - @i,
+        150 + @i, 1, 4, 2, 120 + @i * 2, 95,
+        4, 3, 48, 6, 4, 2,
+        300 + @i * 5, 4500 + @i * 10, 5000 + @i * 10, 1200 + @i * 5, 85, 22, 40, 600 + @i * 5, 12,
+        150 + @i * 2, 90 + @i,
+        25 + @i, 5+ @i, 10+ @i, 8+ @i, 2+ @i, 1+ @i, 3+ @i, 6+ @i, 15+ @i,
+        4+ @i, 3+ @i, 2+ @i, 1+ @i, 0+ @i, 10+ @i,
+        2+ @i, 1+ @i, 1+ @i, 0+ @i, 0+ @i, 4+ @i,
+        1+ @i, 2+ @i, 1+ @i, 0+ @i, 0+ @i, 4+ @i,
+        0+ @i, 1+ @i, 0+ @i, 0+ @i, 0+ @i, 1+ @i,
+        'SUCCESS', 180 + @i
+    );
+
+    -- Insert CDT Metrics
+    INSERT INTO devopsdata.CDT_Metrics (
+        build_id, artifact_id, action_Type, env_level, cd_date, ct_date,
+        started_by, approver, deployment_status,
+        total_tests, passed_tests, failed_tests, notrun_tests, tests_status,
+        tests_coverage, test_duration, code_coverage, test_tool,
+        pipeline_status, pipeline_duration
+    )
+    VALUES (
+        CAST(@buildIdCDT AS VARCHAR), @artifactId, 'CDT', 'QA', @cdDate, @ctDate,
+        'deploy_user', 'qa_lead', 'SUCCESS',
+        120 + @i, 110 + @i, 5+ @i, 5+ @i, 'STABLE',
+        85 + @i, 150 + @i, 78 + @i, 'JUnit',
+        'COMPLETED', 180 + @i
+    );
+	
+    SET @buildIdCDT += 1;
+	    -- Insert CDT Metrics
+    INSERT INTO devopsdata.CDT_Metrics (
+        build_id, artifact_id, action_Type, env_level, cd_date, ct_date,
+        started_by, approver, deployment_status,
+        total_tests, passed_tests, failed_tests, notrun_tests, tests_status,
+        tests_coverage, test_duration, code_coverage, test_tool,
+        pipeline_status, pipeline_duration
+    )
+    VALUES (
+        CAST(@buildIdCDT AS VARCHAR), @artifactId, 'CDT', 'PROD', @cdDate, @ctDate,
+        'deploy_user', 'qa_lead', 'SUCCESS',
+        120 + @i, 110 + @i, 5+ @i, 5+ @i, 'STABLE',
+        85 + @i, 150 + @i, 78 + @i, 'JUnit',
+        'COMPLETED', 180 + @i
+    );
+
+    -- Increment counters
+    SET @i += 1;
+    SET @buildIdCI += 3;
+    SET @buildIdCDT += 2;
+    SET @artifactSuffix += 1;
+END;
